@@ -1,16 +1,13 @@
-var express = require('express');
-var app = express();
+var app = require('express').express();
+var sql = require("mssql");
 
 app.get('/', function (req, res) {
-
-    var sql = require("mssql");
+    
     var config = {
         user: 'dev',
         password: 'Tsense696969',
         server: 'remote.gpereira.tk',
         database: "teste"
-        // If you are on Microsoft Azure, you need this:  
-        //options: {encrypt: true, database: 'AdventureWorks'}  
     };
     // connect to your database
     sql.connect(config, function (err) {
