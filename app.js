@@ -18,7 +18,7 @@ app.get('/', function (req, res) {
         var request = new sql.Request();
 
         // query to the database and get the records
-        request.query('INSERT * from dbo.tsense', function (err, recordset) {
+        request.query('SELECT * from dbo.tsense', function (err, recordset) {
 
             if (err) console.log(err)
 
