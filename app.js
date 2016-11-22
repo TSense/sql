@@ -1,5 +1,5 @@
 var app = require('express').express();
-var sql = require("mssql");
+var sql = require("mssql"); //docs: https://www.npmjs.com/package/mssql
 
 app.get('/', function (req, res) {
     
@@ -7,6 +7,7 @@ app.get('/', function (req, res) {
         user: 'dev',
         password: 'Tsense696969',
         server: 'remote.gpereira.tk',
+        port: 1433, //don't use this when connecting to a named instance
         database: "teste"
     };
     // connect to your database
