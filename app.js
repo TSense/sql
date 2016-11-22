@@ -1,9 +1,16 @@
 var app = require('express').express();
 var sql = require("mssql"); //docs: https://www.npmjs.com/package/mssql
 
+// configurable variables
+var configs = {
+    limitLow: 0,
+    limitHigh: 0,
+    readInterval: 5
+}
+
 app.get('/', function (req, res) {
     
-    var config = {
+    var db = {
         user: 'dev',
         password: 'Tsense696969',
         server: 'remote.gpereira.tk',
@@ -11,7 +18,7 @@ app.get('/', function (req, res) {
         database: "teste"
     };
     // connect to your database
-    sql.connect(config, function (err) {
+    sql.connect(db, function (err) {
 
         if (err) console.log(err);
 
