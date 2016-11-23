@@ -17,7 +17,8 @@ var scanner = new evilscan(options);
 scanner.on('result',function(data) {
     sensors.push(data.ip); //TODO: filter for ESPS and not all ips with port 80 open
 });
-scanner.run();
+
+scanner.run(); // Run this whenever needed to recheck for new ESP's'
 
 // configurable variables
 var configs = {
