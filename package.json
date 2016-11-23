@@ -1,15 +1,26 @@
 {
   "name": "tsense",
   "version": "0.0.1",
-  "description": "",
+  "description": "sql",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Daniel Silva, Diogo Silva e Goncalo Pereira",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
+    "evilscan": "^1.0.2",
     "express": "^4.14.0",
-    "mssql": "^3.3.0"
-  }
+    "mssql": "^3.3.0",
+    "request": "^2.79.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TSense/sql.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TSense/sql/issues"
+  },
+  "homepage": "https://github.com/TSense/sql#readme"
 }
