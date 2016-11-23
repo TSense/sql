@@ -1,5 +1,23 @@
 var sql = require("mssql"); //docs: https://www.npmjs.com/package/mssql
 var request = require("request");
+var evilscan = require("evilscan")
+
+//array of sensors ip
+var sensors = [];
+
+var options = {
+    target:'192.168.1.0/24',
+    port:'80',
+    status:'O', // Timeout, Refused, Open, Unreachable
+    banner:true,
+};
+ 
+var scanner = new evilscan(options);
+ 
+scanner.on('result',function(data) {
+    sensors.push(data.ip); //TODO: filter for ESPS and not all ips with port 80 open
+});
+scanner.run();
 
 // configurable variables
 var configs = {
@@ -22,7 +40,7 @@ sql.connect(db, function (err) {
     if (err) console.log(err);
 
     setInterval(function(){
-        request("http://192.168.1.237/", function (error, response, body) {
+        request("http://192.168.111.98/", function (error, response, body) {
             if (!error) {
                 // create Request object
                 var request = new sql.Request();
