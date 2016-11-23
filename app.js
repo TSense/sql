@@ -1,4 +1,5 @@
-var app = require('express').express();
+var express = require('express');
+var app = express();
 var sql = require("mssql"); //docs: https://www.npmjs.com/package/mssql
 
 // configurable variables
