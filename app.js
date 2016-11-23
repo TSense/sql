@@ -1,43 +1,40 @@
-var express = require('express');
-var app = express();
 var sql = require("mssql"); //docs: https://www.npmjs.com/package/mssql
+var request = require("request");
 
 // configurable variables
 var configs = {
-    limitLow: 0,
-    limitHigh: 0,
-    readInterval: 5
+    limitLow: 18.50,
+    limitHigh: 23.50,
+    readInterval: 5 // seconds
 }
+   
+var db = {
+    user: 'dev',
+    password: 'Tsense696969',
+    server: '188.37.86.91',
+    port: 1433, //don't use this when connecting to a named instance
+    database: "teste"
+};
 
-app.get('/', function (req, res) {
-    
-    var db = {
-        user: 'dev',
-        password: 'Tsense696969',
-        server: 'remote.gpereira.tk',
-        port: 1433, //don't use this when connecting to a named instance
-        database: "teste"
-    };
-    // connect to your database
-    sql.connect(db, function (err) {
+// connect to your database
+sql.connect(db, function (err) {
 
-        if (err) console.log(err);
+    if (err) console.log(err);
 
-        // create Request object
-        var request = new sql.Request();
+    setInterval(function(){
+        request("http://192.168.1.237/", function (error, response, body) {
+            if (!error) {
+                // create Request object
+                var request = new sql.Request();
 
-        // query to the database and get the records
-        request.query('SELECT * from dbo.tsense', function (err, recordset) {
+                // query to the database and get the records
+                request.query('INSERT INTO data ("device", "timestamp", "temperature", "humidity") VALUES ('+body.split(";")[0]+', CURRENT_TIMESTAMP,'+body.split(";")[1]+','+body.split(";")[1]+');', function (err, recordset) {
 
-            if (err) console.log(err)
-
-            // send records as a response
-            res.send(recordset);
-
+                    if (err) console.log(err)
+                });
+            } else {
+                console.log(error);
+            }
         });
-    });
-});
-
-var server = app.listen(5000, function () {
-    console.log('Server is running..');
+    }, configs.readInterval*1000);
 });
