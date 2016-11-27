@@ -22,7 +22,7 @@ sql.connect(db, function (err) {
     if (err) console.log(err);
 
     setInterval(function(){
-        request("http://192.168.1.82:7568/", function (error, response, body) {
+        request("http://192.168.1.82:7568/temp", function (error, response, body) {
             if (!error) {
                 // create Request object
                 var request = new sql.Request();
