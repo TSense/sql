@@ -9,8 +9,6 @@
   "author": "Daniel Silva, Diogo Silva e Goncalo Pereira",
   "license": "MIT",
   "dependencies": {
-    "evilscan": "^1.0.2",
-    "express": "^4.14.0",
     "mssql": "^3.3.0",
     "request": "^2.79.0"
   },
