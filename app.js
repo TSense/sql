@@ -16,7 +16,8 @@ var options = {
 var configs = {
     limitLow: 18.50,
     limitHigh: 23.50,
-    readInterval: 5 // seconds
+    readInterval: 5, // seconds
+    scanInterval: 20
 }
 
 var db = {
@@ -28,13 +29,14 @@ var db = {
 };
 
 var scanner = new evilscan(options);
- 
-scanner.on('result',function(data) {
+
+scanner.on('result', function (data) {
     sensors.push(data.ip); //TODO: filter for ESPS and not all ips with port 80 open
     console.log(data);
 });
-
-scanner.run(); // Run this whenever needed to recheck for new ESP's'
+setInterval(function () {
+    scanner.run();
+}, configs.scanInterval * 1000);
 
 // connect to your database
 sql.connect(db, function (err) {
@@ -48,7 +50,7 @@ sql.connect(db, function (err) {
                     var request = new sql.Request();
 
                     // query to the database and get the records
-                    request.query('INSERT INTO data ("device", "timestamp", "temperature", "humidity") VALUES (' + body.split(";")[0] + ', CURRENT_TIMESTAMP,' + body.split(";")[1] + ',' + body.split(";")[1] + ');', function (err, recordset) {
+                    request.query('INSERT INTO data ("device", "timestamp", "temperature", "humidity") VALUES (' + body.split(";")[0] + ', CURRENT_TIMESTAMP,' + body.split(";")[1] + ',' + body.split(";")[2] + ');', function (err, recordset) {
 
                         if (err) console.log(err)
                     });
