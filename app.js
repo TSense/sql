@@ -9,7 +9,6 @@ var options = {
     target: '192.168.1.0/24',
     port: '7568',
     status: 'O', // Timeout, Refused, Open, Unreachable
-    banner: true
 };
 
 // configurable variables
