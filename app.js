@@ -7,15 +7,16 @@ var sensors = [];
 
 var options = {
     target:'192.168.1.0/24',
-    port:'80',
-    status:'O', // Timeout, Refused, Open, Unreachable
-    banner:true,
+    port:'7568',
+    status:'TRUO', // Timeout, Refused, Open, Unreachable
+    banner:true
 };
  
 var scanner = new evilscan(options);
  
 scanner.on('result',function(data) {
     sensors.push(data.ip); //TODO: filter for ESPS and not all ips with port 80 open
+    console.log(data);
 });
 
 scanner.run(); // Run this whenever needed to recheck for new ESP's'
