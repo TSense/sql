@@ -44,7 +44,7 @@ sql.connect(db, function (err) {
 
     setInterval(function () {
         sensors.forEach(function (sensor) {
-            request("http://" + sensor + ":" + options.port+ "/temp", function (error, response, body) {
+            request("http://" + sensor + ":" + options.port + "/temp", function (error, response, body) {
                 if (!error) {
                     // create Request object
                     var request = new sql.Request();
