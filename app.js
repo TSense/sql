@@ -34,6 +34,7 @@ scanner.on('result', function (data) {
     sensors.push(data.ip); //TODO: filter for ESPS and not all ips with port 80 open
     console.log(data);
 });
+
 setInterval(function () {
     scanner.run();
 }, configs.scanInterval * 1000);
@@ -44,13 +45,13 @@ sql.connect(db, function (err) {
 
     setInterval(function () {
         sensors.forEach(function (sensor) {
-            request("http://" + sensor + ":" + options.port, function (error, response, body) {
+            request("http://" + sensor + ":" + options.port+ "/temp", function (error, response, body) {
                 if (!error) {
                     // create Request object
                     var request = new sql.Request();
 
                     // query to the database and get the records
-                    request.query('INSERT INTO data ("device", "timestamp", "temperature", "humidity") VALUES (' + body.split(";")[0] + ', CURRENT_TIMESTAMP,' + body.split(";")[1] + ',' + body.split(";")[2] + ');', function (err, recordset) {
+                    request.query('INSERT INTO data ("device", "timestamp", "temperature", "humidity") VALUES (\'' + body.split(";")[0] + '\', CURRENT_TIMESTAMP,' + body.split(";")[1] + ',' + body.split(";")[2] + ');', function (err, recordset) {
 
                         if (err) console.log(err)
                     });
