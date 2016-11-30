@@ -29,10 +29,41 @@ var db = {
     database: "tsense"
 };
 
+// Function for validating the input from an ESP
+
+function valid_esp(text){
+    if (!(typeof text === 'string' || text instanceof String)){
+        //console.log("failed type test!");
+        return false;
+    }else{
+        if(text.charAt(17)!=";"){
+            //console.log("failed ``;`` test!");
+            return false;
+        }else{
+            if(!(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(text.split(';')[0]))){
+                //console.log("failed regex!");
+                return false;
+            }
+            else{
+                if(text.split(';').length!=3){
+                   // console.log("number of elements in splitted array didn't check!");
+                    return false;
+                }
+                else{
+                    return true;
+                }
+            }
+        }
+    }
+}
+
+
 var scanner = new evilscan(options);
 
 scanner.on('result', function (data) {
-    sensors.push(data.ip);
+    if(valid_esp(data.body)){  // corrigir isto
+        sensors.push(data.ip);
+    }
     console.log(data);
 });
 
