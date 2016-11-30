@@ -63,6 +63,9 @@ var scanner = new evilscan(options);
 scanner.on('result', function (data) {
     if(valid_esp(data.body)){  // corrigir isto
         sensors.push(data.ip);
+        console.log("Added:");
+    } else{
+        console.log("Not added:");
     }
     console.log(data);
 });
