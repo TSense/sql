@@ -6,9 +6,10 @@ var evilscan = require("evilscan");
 var sensors = [];
 
 var options = {
-    target: '192.168.1.0/24',
-    port: '7568',
+    target: '192.168.1.0/24', // scans on all ips
+    port: '7568', // uncommon port
     status: 'O', // Timeout, Refused, Open, Unreachable
+    concurrency: 20 //Number of scans at the same time
 };
 
 // configurable variables
@@ -16,9 +17,10 @@ var configs = {
     limitLow: 18.50,
     limitHigh: 23.50,
     readInterval: 5, // seconds
-    scanInterval: 20
+    scanInterval: 20 // seconds
 }
 
+// database credentials
 var db = {
     user: 'dev',
     password: 'arroz',
@@ -30,15 +32,16 @@ var db = {
 var scanner = new evilscan(options);
 
 scanner.on('result', function (data) {
-    sensors.push(data.ip); //TODO: filter for ESPS and not all ips with port 80 open
+    sensors.push(data.ip);
     console.log(data);
 });
 
+// Scans for new ESP
 setInterval(function () {
     scanner.run();
 }, configs.scanInterval * 1000);
 
-// connect to your database
+// connect database
 sql.connect(db, function (err) {
     if (err) console.log(err);
 
@@ -55,6 +58,10 @@ sql.connect(db, function (err) {
                         if (err) console.log(err)
                     });
                 } else {
+                    // Remove ESP if it loses connection
+                    if (error.code == 'ECONNREFUSED') {
+                        sensors.splice(sensors.indexOf(error.address), 1);
+                    }
                     console.log(error);
                 }
             });
