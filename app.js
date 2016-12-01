@@ -9,7 +9,8 @@ var options = {
     target: '192.168.1.0/24', // scans on all ips
     port: '7568', // uncommon port
     status: 'O', // Timeout, Refused, Open, Unreachable
-    concurrency: 20 //Number of scans at the same time
+    concurrency: 20, //Number of scans at the same time
+    banner: true
 };
 
 // configurable variables
@@ -31,25 +32,25 @@ var db = {
 
 // Function for validating the input from an ESP
 
-function valid_esp(text){
-    if (!(typeof text === 'string' || text instanceof String)){
+function valid_esp(text) {
+    if (!(typeof text === 'string' || text instanceof String)) {
         //console.log("failed type test!");
         return false;
-    }else{
-        if(text.charAt(17)!=";"){
+    } else {
+        if (text.charAt(17) != ";") {
             //console.log("failed ``;`` test!");
             return false;
-        }else{
-            if(!(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(text.split(';')[0]))){
+        } else {
+            if (!(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(text.split(';')[0]))) {
                 //console.log("failed regex!");
                 return false;
             }
-            else{
-                if(text.split(';').length!=3){
-                   // console.log("number of elements in splitted array didn't check!");
+            else {
+                if (text.split(';').length != 3) {
+                    // console.log("number of elements in splitted array didn't check!");
                     return false;
                 }
-                else{
+                else {
                     return true;
                 }
             }
@@ -57,14 +58,13 @@ function valid_esp(text){
     }
 }
 
-
 var scanner = new evilscan(options);
 
 scanner.on('result', function (data) {
-    if(valid_esp(data.body)){  // corrigir isto
+    if (valid_esp(data.banner)) {
         sensors.push(data.ip);
         console.log("Added:");
-    } else{
+    } else {
         console.log("Not added:");
     }
     console.log(data);
@@ -81,14 +81,12 @@ sql.connect(db, function (err) {
 
     setInterval(function () {
         sensors.forEach(function (sensor) {
-            request("http://" + sensor + ":" + options.port + "/temp", function (error, response, body) {
+            request("http://" + sensor + ":" + options.port + "?templow=" + configs.limitLow + "&temphigh=" + configs.limitHigh, function (error, response, body) {
                 if (!error) {
                     // create Request object
                     var request = new sql.Request();
-
                     // query to the database and get the records
                     request.query('INSERT INTO data ("device", "timestamp", "temperature", "humidity") VALUES (\'' + body.split(";")[0] + '\', CURRENT_TIMESTAMP,' + body.split(";")[1] + ',' + body.split(";")[2] + ');', function (err, recordset) {
-
                         if (err) console.log(err)
                     });
                 } else {
@@ -100,6 +98,5 @@ sql.connect(db, function (err) {
                 }
             });
         });
-
     }, configs.readInterval * 1000);
 });
