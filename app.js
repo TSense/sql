@@ -80,13 +80,19 @@ sql.connect(db, function (err) {
     if (err) console.log(err);
 
     setInterval(function () {
+        var req_config = new sql.Request();
+                    // query to the database and get the configurations
+                    req_config.query('SELECT * FROM config', function (err, recordset) {
+                        if (err) console.log(err);
+                        console.log(recordset);
+                    });
         sensors.forEach(function (sensor) {
             request("http://" + sensor + ":" + options.port + "?templow=" + configs.limitLow + "&temphigh=" + configs.limitHigh, function (error, response, body) {
                 if (!error) {
                     // create Request object
-                    var request = new sql.Request();
+                    var req_data = new sql.Request();
                     // query to the database and get the records
-                    request.query('INSERT INTO data ("device", "timestamp", "temperature", "humidity") VALUES (\'' + body.split(";")[0] + '\', CURRENT_TIMESTAMP,' + body.split(";")[1] + ',' + body.split(";")[2] + ');', function (err, recordset) {
+                    req_data.query('INSERT INTO data ("device", "timestamp", "temperature", "humidity") VALUES (\'' + body.split(";")[0] + '\', CURRENT_TIMESTAMP,' + body.split(";")[1] + ',' + body.split(";")[2] + ');', function (err, recordset) {
                         if (err) console.log(err)
                     });
                 } else {
