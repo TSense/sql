@@ -1,37 +1,34 @@
-var express = require('express');
-var app = express();
+var dgram = require('dgram');
+var VESP = require('./validEspString');
 
-app.get('/', function (req, res) {
+var clearString=process.hrtime()[1];
 
-    var sql = require("mssql");
-    var config = {
-        user: 'dev',
-        password: 'Tsense696969',
-        server: 'remote.gpereira.tk',
-        database: "teste"
-        // If you are on Microsoft Azure, you need this:  
-        //options: {encrypt: true, database: 'AdventureWorks'}  
-    };
-    // connect to your database
-    sql.connect(config, function (err) {
+//console.log(VESP.do(clearString.toString()));
+ESPs=[];
+var broadcastAddress = "192.168.1.255";
 
-        if (err) console.log(err);
 
-        // create Request object
-        var request = new sql.Request();
+setInterval(function(){
+    console.log("ESPs: "+ ESPs);
+}, 5000);
 
-        // query to the database and get the records
-        request.query('INSERT * from dbo.tsense', function (err, recordset) {
-
-            if (err) console.log(err)
-
-            // send records as a response
-            res.send(recordset);
-
+setInterval(function(){
+    var client = dgram.createSocket("udp4");
+    client.bind();    
+    client.on("listening", function () {
+        client.setBroadcast(true);
+        message=VESP.getString();
+        client.send(message, 0, message.length, 4210, broadcastAddress, function(err, bytes) {
+            //console.log("I sent: "+message);
+            client.on("message", function(msg, rinfo){
+                //console.log(msg.toString());
+                if(VESP.validString(message, msg.toString())){
+                    console.log("Valid ESP found on "+rinfo.address);
+                    if(ESPs.indexOf(rinfo.address)==-1)
+                        ESPs.push(rinfo.address);
+                }
+                client.close();
+            });
         });
     });
-});
-
-var server = app.listen(5000, function () {
-    console.log('Server is running..');
-});
+},4000);
