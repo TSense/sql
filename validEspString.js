@@ -25,7 +25,7 @@ function ROT13(char){
 module.exports = {
   setVerbose: function(a){
     verbose=a;
-    return NULL;
+    return null;
   },
   validString: function (str, toVstr) {
     if(typeof str !== 'string'){
