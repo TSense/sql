@@ -27,11 +27,22 @@ module.exports = {
     verbose=a;
     return null;
   },
-  validString: function (str, toVstr) {
+  validString: function (address, str) {
     if(typeof str !== 'string'){
       throw new Error('[VESP] Illegal argument. Must be string. Got '+ typeof str);
     }
     if(verbose) console.log("[VESP] I got: "+ str);
+	ostr=str.split(';')[1];
+	str=str.split(';')[0];
+	aux=address.split('.')[3];
+	
+	if(verbose) console.log("[VESP] String splitted.");
+	if(verbose) console.log("[VESP] B4 IP insertion   : "+str);
+	for(i=0;i<aux.length;i++){
+		str=setCharAt(str, 8+i, aux[i]);
+	}
+	if(verbose) console.log("[VESP] After IP insertion: "+str);
+	
     str=reverse(str);
     auxA=str.substring(0, 16);
     auxB=str.substring(16, 32);
@@ -46,9 +57,9 @@ module.exports = {
     if(verbose) console.log("[VESP] After Magic: "+str);
 
     if(verbose)console.log("[VESP] What I should have gotten: "+md5(str));
-    if(verbose) console.log("[VESP] What I actually got      : "+toVstr);
+    if(verbose) console.log("[VESP] What I actually got      : "+ostr);
 
-    return (md5(str)===toVstr);
+    return (md5(str)===ostr);
   },
 
   getString: function(){

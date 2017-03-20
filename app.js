@@ -12,26 +12,27 @@ setInterval(function(){
     console.log("ESPs: "+ ESPs);
 }, 5000);
 
-VESP.setVerbose(true);
+VESP.setVerbose(false);
 
 
 var client = dgram.createSocket("udp4");
 client.bind();    
 client.on("listening", function () {
     client.setBroadcast(true);
-    message=VESP.getString();
     setInterval(function(){
+		message=VESP.getString();
         client.send(message, 0, message.length, 4210, broadcastAddress);
-    },4000);
+    },10000);
     
     //console.log("I sent: "+message);
     client.on("message", function(msg, rinfo){
-        //console.log(msg.toString());
-        if(VESP.validString(message, msg.toString())){
+		//console.log(rinfo);
+        if(VESP.validString(rinfo.address, msg.toString())){
             console.log("Valid ESP found on "+rinfo.address);
             if(ESPs.indexOf(rinfo.address)==-1)
                 ESPs.push(rinfo.address);
         }
+		//console.log(rinfo.address);
         //client.close();
     });
     
